@@ -1,0 +1,16 @@
+services:
+  mosquitto:
+    container_name: mosquitto
+    image: eclipse-mosquitto:2
+    restart: unless-stopped
+    ports:
+      - "1883:1883"
+    volumes:
+      - /opt/pi-stack/data/mosquitto/config:/mosquitto/config
+      - /opt/pi-stack/data/mosquitto/data:/mosquitto/data
+    networks:
+      - internal
+
+networks:
+  internal:
+    external: true

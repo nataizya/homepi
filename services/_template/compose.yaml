@@ -1,0 +1,15 @@
+services:
+  myservice:
+    container_name: myservice
+    image: vendor/myservice:latest
+    restart: unless-stopped
+    environment:
+      - TZ=${TIMEZONE:-UTC}
+    volumes:
+      - /opt/pi-stack/data/myservice:/config
+    networks:
+      - internal
+
+networks:
+  internal:
+    external: true

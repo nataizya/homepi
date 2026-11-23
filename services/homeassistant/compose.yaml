@@ -1,0 +1,16 @@
+services:
+  homeassistant:
+    container_name: homeassistant
+    image: ghcr.io/home-assistant/home-assistant:stable
+    restart: unless-stopped
+    privileged: true
+    network_mode: host
+    environment:
+      - TZ=${TIMEZONE:-UTC}
+    volumes:
+      - /opt/pi-stack/data/homeassistant:/config
+      - /etc/localtime:/etc/localtime:ro
+      - /run/dbus:/run/dbus:ro
+    # If using a USB Zigbee/Z-Wave dongle:
+    # devices:
+    #   - /dev/serial/by-id/usb-your-stick-id:/dev/ttyUSB0
