@@ -15,10 +15,14 @@ echo " Target user: ${CURRENT_USER}"
 echo " Install path: ${INSTALL_DIR}"
 echo "======================================================"
 
-# 1. Update OS and install essential utilities
+# 1. Resolve pending locks and update OS
+echo "==> Resolving any pending package locks or interrupted states..."
+sudo dpkg --configure -a || true
+sudo apt-get install -f -y || true
+
 echo "==> Updating package indices and installing prerequisites..."
-sudo apt-get update -y
-sudo apt-get install -y ca-certificates curl gnupg lsb-release git jq
+sudo DEBIAN_FRONTEND=noninteractive apt-get update -y
+sudo DEBIAN_FRONTEND=noninteractive apt-get install -y ca-certificates curl gnupg lsb-release git jq
 
 # 2. Install Docker using official script
 if ! command -v docker &> /dev/null; then
