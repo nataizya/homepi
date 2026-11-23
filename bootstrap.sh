@@ -28,11 +28,30 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install -y ca-certificates curl gnup
 if ! command -v docker &> /dev/null; then
     echo "==> Installing Docker Engine..."
     curl -fsSL https://get.docker.com | sudo sh
-    sudo usermod -aG docker "${CURRENT_USER}"
     sudo systemctl enable docker.service
     sudo systemctl enable containerd.service
 else
-    echo "==> Docker is already installed. Skipping."
+    echo "==> Docker is already installed."
+fi
+
+# Ensure docker group exists and grant access to ALL human users (no sudo required)
+echo "==> Configuring Docker permissions for all users..."
+sudo groupadd -f docker
+
+# Add all existing human users (UID >= 1000)
+for u in $(awk -F: '$3 >= 1000 && $3 < 60000 {print $1}' /etc/passwd); do
+    sudo usermod -aG docker "$u"
+done
+sudo usermod -aG docker "${CURRENT_USER}"
+
+# Ensure any future users created with adduser are automatically in the docker group
+if [ -f /etc/adduser.conf ]; then
+    sudo sed -i 's/^#*ADD_EXTRA_GROUPS=.*/ADD_EXTRA_GROUPS=1/' /etc/adduser.conf
+    if grep -q "^EXTRA_GROUPS=" /etc/adduser.conf; then
+        sudo sed -i 's/^EXTRA_GROUPS=.*/EXTRA_GROUPS="docker"/' /etc/adduser.conf
+    else
+        echo 'EXTRA_GROUPS="docker"' | sudo tee -a /etc/adduser.conf > /dev/null
+    fi
 fi
 
 # 3. Create shared docker network
