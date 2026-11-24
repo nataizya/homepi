@@ -77,6 +77,13 @@ mkdir -p "${INSTALL_DIR}/data/homeassistant"
 mkdir -p "${INSTALL_DIR}/data/mosquitto/config"
 mkdir -p "${INSTALL_DIR}/data/mosquitto/data"
 
+if [ ! -f "${INSTALL_DIR}/data/mosquitto/config/mosquitto.conf" ]; then
+    cat << 'EOF' > "${INSTALL_DIR}/data/mosquitto/config/mosquitto.conf"
+listener 1883
+allow_anonymous true
+EOF
+fi
+
 # 6. Setup GitHub Actions Self-Hosted Runner (Optional/Prompted)
 RUNNER_DIR="/opt/actions-runner"
 if [ ! -d "${RUNNER_DIR}" ]; then
@@ -114,12 +121,15 @@ if [ ! -d "${RUNNER_DIR}" ]; then
         echo "==> Configuring runner with GitHub..."
         # Extract owner/repo from URL
         REPO_NAME=$(echo "${REPO_URL}" | sed -E 's/.*github\.com[:\/](.*)\.git/\1/')
-        ./config.sh --url "https://github.com/${REPO_NAME}" --token "${GH_TOKEN}" --unattended --replace
-
-        echo "==> Installing runner systemd service..."
-        sudo ./svc.sh install "${CURRENT_USER}"
-        sudo ./svc.sh start
-        echo "==> GitHub Actions Runner installed and running!"
+        if ./config.sh --url "https://github.com/${REPO_NAME}" --token "${GH_TOKEN}" --unattended --replace; then
+            echo "==> Installing runner systemd service..."
+            sudo ./svc.sh install "${CURRENT_USER}"
+            sudo ./svc.sh start
+            echo "==> GitHub Actions Runner installed and running!"
+        else
+            echo "==> [WARNING] GitHub runner registration failed (token may be expired or invalid)."
+            echo "    Your Docker stack will still start! You can register the runner anytime later."
+        fi
     fi
 else
     echo "==> GitHub runner already configured."
