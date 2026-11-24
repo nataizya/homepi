@@ -12,5 +12,5 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - /run/dbus:/run/dbus:ro
     # If using a USB Zigbee/Z-Wave dongle:
-    # devices:
-    #   - /dev/serial/by-id/usb-your-stick-id:/dev/ttyUSB0
+    devices:
+      - /dev/serial/by-id/usb-your-stick-id:/dev/ttyUSB0
