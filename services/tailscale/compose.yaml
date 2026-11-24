@@ -2,7 +2,7 @@ services:
   tailscale:
     image: tailscale/tailscale:latest
     container_name: tailscale
-    hostname: tailscale-nginx
+    hostname: tailscale
     environment:
       - TS_AUTHKEY=tskey-auth-kEvXpqScuM11CNTRL-16UP1vtVWWbV5x1gB3qmWbrW5BYVUD4J
       - TS_STATE_DIR=/var/lib/tailscale
