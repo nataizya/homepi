@@ -3,4 +3,4 @@ name: pi-stack
 include:
   - services/homeassistant/compose.yaml
   - services/mosquitto/compose.yaml
-  - service/tailscale/compose.yaml
+  - services/tailscale/compose.yaml
