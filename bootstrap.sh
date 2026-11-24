@@ -17,6 +17,15 @@ echo "======================================================"
 
 # 1. Resolve pending locks and update OS
 echo "==> Resolving any pending package locks or interrupted states..."
+# Prevent rpi-connect postinst from restarting the service and dropping active web terminal sessions
+for pkg in rpi-connect rpi-connect-lite; do
+    if [ -f "/var/lib/dpkg/info/${pkg}.postinst" ]; then
+        if ! grep -q 'exit 0' "/var/lib/dpkg/info/${pkg}.postinst"; then
+            sudo sed -i '2i exit 0' "/var/lib/dpkg/info/${pkg}.postinst" 2>/dev/null || true
+        fi
+    fi
+done
+
 sudo dpkg --configure -a || true
 sudo apt-get install -f -y || true
 
