@@ -13,4 +13,4 @@ services:
       - /run/dbus:/run/dbus:ro
     # If using a USB Zigbee/Z-Wave dongle:
     devices:
-      - /dev/serial/by-id/usb-your-stick-id:/dev/ttyUSB0
+      - /dev/serial/by-id/usb-Itead_Sonoff_Zigbee_3.0_USB_Dongle_Plus_V2_8a37e4546f12f011ae0b0a14773d9da9-if00-port0:/dev/ttyUSB0
